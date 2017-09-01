@@ -13,6 +13,7 @@
         }
 
         .box {
+            cursor: pointer;
             box-sizing: border-box;
             position: relative;
             width: 10%;
@@ -20,14 +21,60 @@
 
         .box-image {
             position: relative;
+            transition: transform 300ms ease-in;
+            z-index: 1;
+        }
+
+        .box-image:hover {
+            transform: scale(1.04);
+            transition: transform 300ms ease-out;
+        }
+
+        .box-image:active {
+            transform: scale(1);
+        }
+
+        .box-image-over-holder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 3;
+            cursor: default;
         }
 
         .info-holder {
-            display: none;
             position: absolute;
             width: 300px;
             bottom: -30px;
             left: 80px;
+            z-index: 4;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background-color: rgba(255, 255, 255, 0.85);
+            z-index: 2;
+        }
+
+        .close {
+            cursor: pointer;
+            position: absolute;
+            top: -20px;
+            right: 0;
+        }
+
+        .fade-enter-active, .fade-leave-active {
+            transition: opacity 400ms ease-in;
+        }
+
+        .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */
+        {
+            opacity: 0;
+            transition: opacity 400ms ease-out;
         }
     </style>
 </head>
@@ -38,13 +85,22 @@
     <button @click="showHospitality">Hospitality</button>
     <div class="box-container">
         <div v-for="box in filteredBoxes" class="box" :style="box.boxStyles">
-            <img :src="box.image" class="box-image" :style="box.imageOffset">
-            <div class="info-holder">
-                <h3>{{box.title}}</h3>
-                <a :href="box.url">View Project</a>
-            </div>
+            <img :src="box.image" class="box-image" @mousedown="toggleDetails(box)">
+            <transition name="fade">
+                <div v-if="box.showDetails" class="box-image-over-holder" :style="boxHolderOffset(box.boxStyles)">
+                    <button @click="toggleDetails(box)" class="close">X</button>
+                    <img :src="box.image" class="box-image-over">
+                    <div class="info-holder">
+                        <h3>{{box.title}}</h3>
+                        <a :href="box.url">View Project</a>
+                    </div>
+                </div>
+            </transition>
         </div>
     </div>
+    <transition name="fade">
+        <div class="overlay" v-if="showOverlay"></div>
+    </transition>
 </div>
 <script src="https://unpkg.com/vue"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
@@ -54,6 +110,7 @@
     new Vue({
         el: '#root',
         data: {
+            showOverlay: false,
             boxes: [
                 {
                     title: "Image One",
@@ -69,6 +126,7 @@
                         width: "200px",
                         height: "300px"
                     },
+                    showDetails: false
                 },
                 {
                     title: "Image Two",
@@ -84,6 +142,7 @@
                         width: "150px",
                         height: "220px"
                     },
+                    showDetails: false
                 },
                 {
                     title: "Image Three",
@@ -99,7 +158,7 @@
                         width: "125px",
                         height: "100px"
                     },
-
+                    showDetails: false
                 },
                 {
                     title: "Image Four",
@@ -115,6 +174,7 @@
                         width: "150px",
                         height: "150px"
                     },
+                    showDetails: false
                 },
                 {
                     title: "Image Five",
@@ -130,6 +190,7 @@
                         width: "180px",
                         height: "150px"
                     },
+                    showDetails: false
                 }, {
                     title: "Image One",
                     location: "Location One",
@@ -144,6 +205,7 @@
                         width: "200px",
                         height: "300px"
                     },
+                    showDetails: false
                 },
                 {
                     title: "Image Two",
@@ -159,6 +221,7 @@
                         width: "250px",
                         height: "170px"
                     },
+                    showDetails: false
                 },
                 {
                     title: "Image Three",
@@ -174,7 +237,7 @@
                         width: "150px",
                         height: "150px"
                     },
-
+                    showDetails: false
                 },
                 {
                     title: "Image Four",
@@ -190,6 +253,7 @@
                         width: "450px",
                         height: "250px"
                     },
+                    showDetails: false
                 },
                 {
                     title: "Image Five",
@@ -205,6 +269,7 @@
                         width: "180px",
                         height: "150px"
                     },
+                    showDetails: false
                 },
             ],
             filteredBoxes: []
@@ -253,6 +318,9 @@
                 });
                 masonry.masonry('remove', '.box')
             },
+            boxHolderOffset(styles) {
+                return {top: parseInt(styles.paddingTop) + "px", left: parseInt(styles.paddingLeft) + "px"}
+            },
             showAll() {
                 this.filteredBoxes = this.filterBoxes('all');
                 this.$nextTick(function () {
@@ -270,10 +338,13 @@
                 this.$nextTick(function () {
                     this.layoutMasonry();
                 })
+            },
+            toggleDetails(box) {
+                box.showDetails = !box.showDetails;
+                this.showOverlay = box.showDetails;
             }
         }
-    })
-    ;
+    });
 </script>
 </body>
 </html>
