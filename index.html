@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <style>
-        img {
-        }
-
         .box-container {
             width: 800px;
             margin: 0 auto;
@@ -86,16 +83,7 @@
     <div class="box-container">
         <div v-for="box in filteredBoxes" class="box" :style="box.boxStyles">
             <img :src="box.image" class="box-image" @mousedown="toggleDetails(box)">
-            <transition name="fade">
-                <div v-if="box.showDetails" class="box-image-over-holder" :style="boxHolderOffset(box.boxStyles)">
-                    <button @click="toggleDetails(box)" class="close">X</button>
-                    <img :src="box.image" class="box-image-over">
-                    <div class="info-holder">
-                        <h3>{{box.title}}</h3>
-                        <a :href="box.url">View Project</a>
-                    </div>
-                </div>
-            </transition>
+            <image-box :box="box" v-on:close-box="toggleDetails(box)"></image-box>
         </div>
     </div>
     <transition name="fade">
@@ -105,6 +93,7 @@
 <script src="https://unpkg.com/vue"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
 <script src="js/masonry.pkgd.min.js"></script>
+<script src="app/components/image-box.js"></script>
 <script>
     let masonry;
     new Vue({
@@ -317,9 +306,6 @@
                     masonry.masonry('layout');
                 });
                 masonry.masonry('remove', '.box')
-            },
-            boxHolderOffset(styles) {
-                return {top: parseInt(styles.paddingTop) + "px", left: parseInt(styles.paddingLeft) + "px"}
             },
             showAll() {
                 this.filteredBoxes = this.filterBoxes('all');
