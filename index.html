@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <style>
-        .box-container {
+        .container {
             width: 800px;
             margin: 0 auto;
         }
@@ -57,6 +57,21 @@
             z-index: 2;
         }
 
+        .list-box {
+            padding: 10px 0;
+        }
+
+        .list-box:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        .list-image {
+            float: left;
+        }
+
+
         .close {
             cursor: pointer;
             position: absolute;
@@ -80,12 +95,26 @@
     <button @click="showAll">All</button>
     <button @click="showResidential">Residential</button>
     <button @click="showHospitality">Hospitality</button>
-    <div class="box-container">
-        <div v-for="box in filteredBoxes" class="box" :style="box.boxStyles">
-            <img :src="box.image" class="box-image" @mousedown="toggleDetails(box)">
-            <image-box :box="box" v-on:close-box="toggleDetails(box)"></image-box>
+    <button @click="toggleView">List View</button>
+    <transition name="fade" v-on:after-leave="gridFadeEnd">
+        <div class="container box-container" v-if="showGridView">
+            <div v-for="box in filteredBoxes" class="box" :style="box.boxStyles">
+                <img :src="box.image" class="box-image" @mousedown="toggleDetails(box)">
+                <image-box :box="box" v-on:close-box="toggleDetails(box)"></image-box>
+            </div>
         </div>
-    </div>
+    </transition>
+    <transition name="fade" v-on:after-leave="listFadeEnd">
+        <div class="container" v-if="showListView">
+            <div v-for="box in filteredBoxes" class="list-box">
+                <img :src="box.smlImage" class="list-image">
+                <div class="list-info-holder">
+                    <h3>{{box.title}}</h3>
+                    <a :href="box.url">View Project</a>
+                </div>
+            </div>
+        </div>
+    </transition>
     <transition name="fade">
         <div class="overlay" v-if="showOverlay"></div>
     </transition>
@@ -100,12 +129,15 @@
         el: '#root',
         data: {
             showOverlay: false,
+            showGridView: true,
+            showListView: false,
             boxes: [
                 {
                     title: "Image One",
                     location: "Location One",
                     url: "https://google.com",
                     image: "http://placehold.it/200x300/ff00ff",
+                    smlImage: "http://placehold.it/100x100/0000ff",
                     cat: ['all', 'hospitality'],
                     boxStyles: {
                         paddingTop: '10px',
@@ -122,6 +154,7 @@
                     location: "Location Two",
                     url: "https://google.com",
                     image: "http://placehold.it/150x220",
+                    smlImage: "http://placehold.it/100x100/0000ff",
                     cat: ['all', 'residential'],
                     boxStyles: {
                         paddingTop: '10px',
@@ -138,6 +171,7 @@
                     location: "Location Three",
                     url: "https://google.com",
                     image: "http://placehold.it/125x100",
+                    smlImage: "http://placehold.it/100x100/0000ff",
                     cat: ['all', 'residential'],
                     boxStyles: {
                         paddingTop: '10px',
@@ -154,6 +188,7 @@
                     location: "Location Four",
                     url: "https://google.com",
                     image: "http://placehold.it/150x150/ff00ff",
+                    smlImage: "http://placehold.it/100x100/0000ff",
                     cat: ['all', 'hospitality'],
                     boxStyles: {
                         paddingTop: '10px',
@@ -170,6 +205,7 @@
                     location: "Location Five",
                     url: "https://google.com",
                     image: "http://placehold.it/180x150",
+                    smlImage: "http://placehold.it/100x100/0000ff",
                     cat: ['all', 'residential'],
                     boxStyles: {
                         paddingTop: '10px',
@@ -185,6 +221,7 @@
                     location: "Location One",
                     url: "https://google.com",
                     image: "http://placehold.it/200x300/ff00ff",
+                    smlImage: "http://placehold.it/100x100/0000ff",
                     cat: ['all', 'hospitality'],
                     boxStyles: {
                         paddingTop: '10px',
@@ -201,6 +238,7 @@
                     location: "Location Two",
                     url: "https://google.com",
                     image: "http://placehold.it/250x170/ff00ff",
+                    smlImage: "http://placehold.it/100x100/0000ff",
                     cat: ['all', 'hospitality'],
                     boxStyles: {
                         paddingTop: '10px',
@@ -217,6 +255,7 @@
                     location: "Location Three",
                     url: "https://google.com",
                     image: "http://placehold.it/150x150/ff00ff",
+                    smlImage: "http://placehold.it/100x100/0000ff",
                     cat: ['all', 'hospitality'],
                     boxStyles: {
                         paddingTop: '10px',
@@ -233,6 +272,7 @@
                     location: "Location Four",
                     url: "https://google.com",
                     image: "http://placehold.it/450x250",
+                    smlImage: "http://placehold.it/100x100/0000ff",
                     cat: ['all', 'residential'],
                     boxStyles: {
                         paddingTop: '10px',
@@ -249,6 +289,7 @@
                     location: "Location Five",
                     url: "https://google.com",
                     image: "http://placehold.it/180x150/ff00ff",
+                    smlImage: "http://placehold.it/100x100/0000ff",
                     cat: ['all', 'hospitality'],
                     boxStyles: {
                         paddingTop: '10px',
@@ -271,6 +312,32 @@
             })
         },
         methods: {
+            gridFadeEnd() {
+                if (!this.showGridView) {
+                    this.displayListView();
+                }
+            },
+            listFadeEnd() {
+                if (!this.showListView) {
+                    this.displayGridView();
+                }
+            },
+            toggleView() {
+                if (this.showGridView) {
+                    this.showGridView = false;
+                } else {
+                    this.showListView = false;
+                }
+            },
+            displayListView() {
+                this.showListView = true;
+            },
+            displayGridView() {
+                this.showGridView = true;
+                this.$nextTick(function () {
+                    this.startMasonry();
+                })
+            },
             filterBoxes(category) {
                 return this.boxes.filter(b => b.cat.some(c => c === category));
             },
