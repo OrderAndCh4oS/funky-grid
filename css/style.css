@@ -10,7 +10,7 @@ button {
     cursor: pointer;
 }
 
-button:hover {
+button:hover, button.active {
     background-color: darkcyan;
 }
 

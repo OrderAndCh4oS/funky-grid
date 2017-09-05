@@ -8,8 +8,11 @@
 <body>
 <div id="root">
     <div class="wrapper">
-        <toggles @toggle-grid="toggleView" @filter-category="(cat) => showCategory(cat)" :gridtoggle="gridToggle"
-                 :categories="categories"></toggles>
+        <toggles @toggle-grid="toggleView"
+                 @filter-category="(cat) => showCategory(cat)"
+                 :gridtoggle="gridToggle"
+                 :categories="categories">
+        </toggles>
         <transition name="fade" @after-leave="gridFadeEnd">
             <div class="box-container" v-if="showGridView">
                 <div v-for="box in filteredBoxes" class="box" :style="box.boxStyles">
