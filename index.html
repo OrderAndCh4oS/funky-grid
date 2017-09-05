@@ -16,8 +16,9 @@
         <transition name="fade" @after-leave="gridFadeEnd">
             <div class="box-container" v-if="showGridView">
                 <div v-for="box in filteredBoxes" class="box" :style="box.boxStyles">
-                    <img :src="box.image" class="box-image" @mousedown="toggleDetails(box)">
-                    <image-box :box="box" @close-box="toggleDetails(box)"></image-box>
+                    <image-box :box="box"
+                               @toggle-detail="(bx) => toggleDetails(bx)"
+                    ></image-box>
                 </div>
             </div>
         </transition>
@@ -41,8 +42,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
 <script src="js/masonry.pkgd.min.js"></script>
 <script src="app/data/dummyBoxes.js"></script>
+<script src="app/components/toggle.js"></script>
 <script src="app/components/toggles.js"></script>
 <script src="app/components/image-box.js"></script>
+<script src="app/components/image-detail-box.js"></script>
 <script src="app/main.js"></script>
 </body>
 </html>
