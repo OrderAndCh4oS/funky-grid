@@ -122,9 +122,9 @@
 <div id="root">
     <div class="wrapper">
         <div class="toggles">
-            <button @click="showAll">All</button>
-            <button @click="showCategoryOne">Black</button>
-            <button @click="showCategoryTwo">White</button>
+            <button @click="showCategory('all')">All</button>
+            <button @click="showCategory('black')">Black</button>
+            <button @click="showCategory('white')">White</button>
             <button @click="toggleView">{{ gridToggle }}</button>
         </div>
         <transition name="fade" v-on:after-leave="gridFadeEnd">
@@ -156,7 +156,7 @@
 <script src="js/masonry.pkgd.min.js"></script>
 <script src="app/components/image-box.js"></script>
 <script>
-    let masonry
+    let masonry;
     new Vue({
         el: '#root',
         data: {
@@ -164,6 +164,10 @@
             showOverlay: false,
             showGridView: true,
             showListView: false,
+            categories: [
+                'black',
+                'white'
+            ],
             boxes: [
                 {
                     title: 'Image One',
@@ -171,7 +175,7 @@
                     url: 'https://google.com',
                     image: 'http://placehold.it/200x300/000000/ffffff',
                     smlImage: 'http://placehold.it/100x100/000000/ffffff',
-                    cat: ['all', 'category-one'],
+                    cat: ['all', 'black'],
                     boxStyles: {
                         paddingTop: '10px',
                         paddingRight: '10px',
@@ -188,7 +192,7 @@
                     url: 'https://google.com',
                     image: 'http://placehold.it/150x220/ffffff/000000',
                     smlImage: 'http://placehold.it/100x100/ffffff/000000',
-                    cat: ['all', 'category-two'],
+                    cat: ['all', 'white'],
                     boxStyles: {
                         paddingTop: '10px',
                         paddingRight: '10px',
@@ -205,7 +209,7 @@
                     url: 'https://google.com',
                     image: 'http://placehold.it/125x100/ffffff/000000',
                     smlImage: 'http://placehold.it/100x100/ffffff/000000',
-                    cat: ['all', 'category-two'],
+                    cat: ['all', 'white'],
                     boxStyles: {
                         paddingTop: '10px',
                         paddingRight: '10px',
@@ -222,7 +226,7 @@
                     url: 'https://google.com',
                     image: 'http://placehold.it/150x150/000000/ffffff',
                     smlImage: 'http://placehold.it/100x100/000000/ffffff',
-                    cat: ['all', 'category-one'],
+                    cat: ['all', 'black'],
                     boxStyles: {
                         paddingTop: '10px',
                         paddingRight: '10px',
@@ -239,7 +243,7 @@
                     url: 'https://google.com',
                     image: 'http://placehold.it/180x150/ffffff/000000',
                     smlImage: 'http://placehold.it/100x100/ffffff/000000',
-                    cat: ['all', 'category-two'],
+                    cat: ['all', 'white'],
                     boxStyles: {
                         paddingTop: '10px',
                         paddingRight: '10px',
@@ -255,7 +259,7 @@
                     url: 'https://google.com',
                     image: 'http://placehold.it/200x300/000000/ffffff',
                     smlImage: 'http://placehold.it/100x100/000000/ffffff',
-                    cat: ['all', 'category-one'],
+                    cat: ['all', 'black'],
                     boxStyles: {
                         paddingTop: '10px',
                         paddingRight: '10px',
@@ -272,7 +276,7 @@
                     url: 'https://google.com',
                     image: 'http://placehold.it/250x170/000000/ffffff',
                     smlImage: 'http://placehold.it/100x100/000000/ffffff',
-                    cat: ['all', 'category-one'],
+                    cat: ['all', 'black'],
                     boxStyles: {
                         paddingTop: '10px',
                         paddingRight: '10px',
@@ -289,7 +293,7 @@
                     url: 'https://google.com',
                     image: 'http://placehold.it/150x150/000000/ffffff',
                     smlImage: 'http://placehold.it/100x100/000000/ffffff',
-                    cat: ['all', 'category-one'],
+                    cat: ['all', 'black'],
                     boxStyles: {
                         paddingTop: '10px',
                         paddingRight: '10px',
@@ -306,7 +310,7 @@
                     url: 'https://google.com',
                     image: 'http://placehold.it/450x250/ffffff/000000',
                     smlImage: 'http://placehold.it/100x100/ffffff/000000',
-                    cat: ['all', 'category-two'],
+                    cat: ['all', 'white'],
                     boxStyles: {
                         paddingTop: '10px',
                         paddingRight: '10px',
@@ -323,7 +327,7 @@
                     url: 'https://google.com',
                     image: 'http://placehold.it/180x150/000000/ffffff',
                     smlImage: 'http://placehold.it/100x100/000000/ffffff',
-                    cat: ['all', 'category-one'],
+                    cat: ['all', 'black'],
                     boxStyles: {
                         paddingTop: '10px',
                         paddingRight: '10px',
@@ -338,13 +342,26 @@
             filteredBoxes: [],
         },
         mounted: function () {
-            this.filteredBoxes = this.filterBoxes('all')
-            this.setPadding(this.filteredBoxes)
+            this.filteredBoxes = this.filterBoxes('all');
+            this.setPadding(this.filteredBoxes);
             this.$nextTick(function () {
                 this.startMasonry()
             })
         },
         methods: {
+            filterBoxes(category) {
+                return this.boxes.filter(b => b.cat.some(c => c === category))
+            },
+            showCategory(category) {
+                this.filteredBoxes = this.filterBoxes(category);
+                this.$nextTick(function () {
+                    this.layoutMasonry()
+                })
+            },
+            toggleDetails(box) {
+                box.showDetails = !box.showDetails;
+                this.showOverlay = box.showDetails
+            },
             gridFadeEnd() {
                 if (!this.showGridView) {
                     this.displayListView()
@@ -357,10 +374,10 @@
             },
             toggleView() {
                 if (this.showGridView) {
-                    this.showGridView = false
+                    this.showGridView = false;
                     this.gridToggle = 'Grid View'
                 } else {
-                    this.showListView = false
+                    this.showListView = false;
                     this.gridToggle = 'List View'
                 }
             },
@@ -368,29 +385,26 @@
                 this.showListView = true
             },
             displayGridView() {
-                this.showGridView = true
+                this.showGridView = true;
                 this.$nextTick(function () {
                     this.startMasonry()
                 })
             },
-            filterBoxes(category) {
-                return this.boxes.filter(b => b.cat.some(c => c === category))
-            },
             setPadding(boxes) {
                 boxes.map(b => {
-                    const top = Math.floor(Math.random() * 22 + 8)
-                    const right = Math.floor(Math.random() * 22 + 8)
-                    const bottom = Math.floor(Math.random() * 22 + 8)
-                    const left = Math.floor(Math.random() * 22 + 8)
-                    const currentWidth = parseInt(b.boxStyles.width)
-                    const currentHeight = parseInt(b.boxStyles.height)
-                    b.boxStyles.paddingTop = top + 'px'
-                    b.boxStyles.paddingRight = right + 'px'
-                    b.boxStyles.paddingBottom = bottom + 'px'
-                    b.boxStyles.paddingLeft = left + 'px'
-                    b.boxStyles.width = currentWidth + left + right + 'px'
+                    const top = Math.floor(Math.random() * 22 + 8);
+                    const right = Math.floor(Math.random() * 22 + 8);
+                    const bottom = Math.floor(Math.random() * 22 + 8);
+                    const left = Math.floor(Math.random() * 22 + 8);
+                    const currentWidth = parseInt(b.boxStyles.width);
+                    const currentHeight = parseInt(b.boxStyles.height);
+                    b.boxStyles.paddingTop = top + 'px';
+                    b.boxStyles.paddingRight = right + 'px';
+                    b.boxStyles.paddingBottom = bottom + 'px';
+                    b.boxStyles.paddingLeft = left + 'px';
+                    b.boxStyles.width = currentWidth + left + right + 'px';
                     b.boxStyles.height = currentHeight + top + bottom + 'px'
-                })
+                });
                 this.$nextTick(function () {
                     this.startMasonry()
                 })
@@ -399,37 +413,15 @@
                 masonry = $('.box-container').masonry({
                     itemSelector: '.box',
                     columnWidth: 25,
-                })
+                });
                 masonry.masonry('remove', '.box')
             },
             layoutMasonry() {
                 masonry.masonry('once', 'removeComplete', function () {
-                    masonry.masonry('reloadItems')
+                    masonry.masonry('reloadItems');
                     masonry.masonry('layout')
-                })
+                });
                 masonry.masonry('remove', '.box')
-            },
-            showAll() {
-                this.filteredBoxes = this.filterBoxes('all')
-                this.$nextTick(function () {
-                    this.layoutMasonry()
-                })
-            },
-            showCategoryOne() {
-                this.filteredBoxes = this.filterBoxes('category-one')
-                this.$nextTick(function () {
-                    this.layoutMasonry()
-                })
-            },
-            showCategoryTwo() {
-                this.filteredBoxes = this.filterBoxes('category-two')
-                this.$nextTick(function () {
-                    this.layoutMasonry()
-                })
-            },
-            toggleDetails(box) {
-                box.showDetails = !box.showDetails
-                this.showOverlay = box.showDetails
             },
         },
     })
