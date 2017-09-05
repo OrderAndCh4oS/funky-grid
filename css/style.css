@@ -1,0 +1,112 @@
+body {
+    background-color: aquamarine;
+}
+
+button {
+    background-color: black;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: darkcyan;
+}
+
+a {
+    color: black;
+}
+
+a:hover {
+    color: white;
+}
+
+.wrapper {
+    width: 60%;
+    margin: 0 auto;
+}
+
+.toggles {
+    padding: 20px 0;
+}
+
+.box {
+    cursor: pointer;
+    box-sizing: border-box;
+    position: relative;
+    width: 10%;
+}
+
+.box-image {
+    position: relative;
+    transition: transform 300ms ease-in;
+    z-index: 1;
+}
+
+.box-image:hover {
+    transform: scale(1.04);
+    transition: transform 300ms ease-out;
+}
+
+.box-image:active {
+    transform: scale(1);
+}
+
+.box-image-over-holder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 3;
+    cursor: default;
+}
+
+.info-holder {
+    position: absolute;
+    width: 300px;
+    bottom: -30px;
+    left: 80px;
+    z-index: 4;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(255, 255, 255, 0.85);
+    z-index: 2;
+}
+
+.list-box {
+    padding: 10px 0;
+}
+
+.list-box:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.list-image {
+    float: left;
+    padding-right: 15px;
+}
+
+.close {
+    cursor: pointer;
+    position: absolute;
+    top: -20px;
+    right: 0;
+}
+
+.fade-enter-active, .fade-leave-active {
+    transition: opacity 400ms ease-in;
+}
+
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */
+{
+    opacity: 0;
+    transition: opacity 400ms ease-out;
+}

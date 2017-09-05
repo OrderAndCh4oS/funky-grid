@@ -3,139 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title>Funky Grid Prototype</title>
-    <style>
-        body {
-            background-color: aquamarine;
-        }
-
-        button {
-            background-color: black;
-            color: white;
-            padding: 8px 12px;
-            border: none;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: darkcyan;
-        }
-
-        a {
-            color: black;
-        }
-
-        a:hover {
-            color: white;
-        }
-
-        .wrapper {
-            width: 60%;
-            margin: 0 auto;
-        }
-
-        .toggles {
-            padding: 20px 0;
-        }
-
-        .box {
-            cursor: pointer;
-            box-sizing: border-box;
-            position: relative;
-            width: 10%;
-        }
-
-        .box-image {
-            position: relative;
-            transition: transform 300ms ease-in;
-            z-index: 1;
-        }
-
-        .box-image:hover {
-            transform: scale(1.04);
-            transition: transform 300ms ease-out;
-        }
-
-        .box-image:active {
-            transform: scale(1);
-        }
-
-        .box-image-over-holder {
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 3;
-            cursor: default;
-        }
-
-        .info-holder {
-            position: absolute;
-            width: 300px;
-            bottom: -30px;
-            left: 80px;
-            z-index: 4;
-        }
-
-        .overlay {
-            position: fixed;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            background-color: rgba(255, 255, 255, 0.85);
-            z-index: 2;
-        }
-
-        .list-box {
-            padding: 10px 0;
-        }
-
-        .list-box:after {
-            content: "";
-            display: table;
-            clear: both;
-        }
-
-        .list-image {
-            float: left;
-            padding-right: 15px;
-        }
-
-        .close {
-            cursor: pointer;
-            position: absolute;
-            top: -20px;
-            right: 0;
-        }
-
-        .fade-enter-active, .fade-leave-active {
-            transition: opacity 400ms ease-in;
-        }
-
-        .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */
-        {
-            opacity: 0;
-            transition: opacity 400ms ease-out;
-        }
-    </style>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <div id="root">
     <div class="wrapper">
-        <div class="toggles">
-            <button @click="showCategory('all')">All</button>
-            <button @click="showCategory('black')">Black</button>
-            <button @click="showCategory('white')">White</button>
-            <button @click="toggleView">{{ gridToggle }}</button>
-        </div>
-        <transition name="fade" v-on:after-leave="gridFadeEnd">
+        <toggles @toggle-grid="toggleView" @filter-category="(cat) => showCategory(cat)" :gridtoggle="gridToggle"
+                 :categories="categories"></toggles>
+        <transition name="fade" @after-leave="gridFadeEnd">
             <div class="box-container" v-if="showGridView">
                 <div v-for="box in filteredBoxes" class="box" :style="box.boxStyles">
                     <img :src="box.image" class="box-image" @mousedown="toggleDetails(box)">
-                    <image-box :box="box" v-on:close-box="toggleDetails(box)"></image-box>
+                    <image-box :box="box" @close-box="toggleDetails(box)"></image-box>
                 </div>
             </div>
         </transition>
-        <transition name="fade" v-on:after-leave="listFadeEnd">
+        <transition name="fade" @after-leave="listFadeEnd">
             <div class="list-container" v-if="showListView">
                 <div v-for="box in filteredBoxes" class="list-box">
                     <img :src="box.smlImage" class="list-image">
@@ -154,6 +37,7 @@
 <script src="https://unpkg.com/vue"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
 <script src="js/masonry.pkgd.min.js"></script>
+<script src="app/components/toggles.js"></script>
 <script src="app/components/image-box.js"></script>
 <script>
     let masonry;
@@ -165,6 +49,7 @@
             showGridView: true,
             showListView: false,
             categories: [
+                'all',
                 'black',
                 'white'
             ],
@@ -358,20 +243,6 @@
                     this.layoutMasonry()
                 })
             },
-            toggleDetails(box) {
-                box.showDetails = !box.showDetails;
-                this.showOverlay = box.showDetails
-            },
-            gridFadeEnd() {
-                if (!this.showGridView) {
-                    this.displayListView()
-                }
-            },
-            listFadeEnd() {
-                if (!this.showListView) {
-                    this.displayGridView()
-                }
-            },
             toggleView() {
                 if (this.showGridView) {
                     this.showGridView = false;
@@ -389,6 +260,20 @@
                 this.$nextTick(function () {
                     this.startMasonry()
                 })
+            },
+            gridFadeEnd() {
+                if (!this.showGridView) {
+                    this.displayListView()
+                }
+            },
+            listFadeEnd() {
+                if (!this.showListView) {
+                    this.displayGridView()
+                }
+            },
+            toggleDetails(box) {
+                box.showDetails = !box.showDetails;
+                this.showOverlay = box.showDetails
             },
             setPadding(boxes) {
                 boxes.map(b => {
