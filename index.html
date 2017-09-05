@@ -9,16 +9,13 @@
 <div id="root">
     <div class="wrapper">
         <toggles @toggle-grid="toggleView"
-                 @filter-category="(cat) => showCategory(cat)"
                  :gridtoggle="gridToggle"
                  :categories="categories">
         </toggles>
         <transition name="fade" @after-leave="gridFadeEnd">
             <div class="box-container" v-if="showGridView">
                 <div v-for="box in filteredBoxes" class="box" :style="box.boxStyles">
-                    <image-box :box="box"
-                               @toggle-detail="(bx) => toggleDetails(bx)"
-                    ></image-box>
+                    <image-box :box="box"></image-box>
                 </div>
             </div>
         </transition>
@@ -42,6 +39,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
 <script src="js/masonry.pkgd.min.js"></script>
 <script src="app/data/dummyBoxes.js"></script>
+<script src="app/listeners/vue-event-listener.js"></script>
 <script src="app/components/toggle.js"></script>
 <script src="app/components/toggles.js"></script>
 <script src="app/components/image-box.js"></script>

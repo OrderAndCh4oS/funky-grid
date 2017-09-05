@@ -19,7 +19,9 @@ new Vue({
         this.setPadding(this.filteredBoxes);
         this.$nextTick(function () {
             this.startMasonry()
-        })
+        });
+        Event.$on('filter-category', (cat) => this.showCategory(cat))
+        Event.$on('toggle-box', (bx) => this.toggleDetails(bx))
     },
     methods: {
         filterBoxes(category) {

@@ -2,11 +2,18 @@
 
 Vue.component('toggles', {
     props: ['categories', 'gridtoggle'],
-    template: '\n        <div class="toggles">\n            <template v-for="category in categories">\n                <toggle @filter-category="filterCategory" :category="category" :selected="category == \'all\'"></toggle>&nbsp;\n            </template>\n            <button @click="$emit(\'toggle-grid\')">{{ gridtoggle }}</button>\n        </div>\n    ',
+    template: '\n        <div class="toggles">\n            <template v-for="category in categories">\n                <toggle :category="category" :selected="category == \'all\'"></toggle>&nbsp;\n            </template>\n            <button @click="$emit(\'toggle-grid\')">{{ gridtoggle }}</button>\n        </div>\n    ',
     data: function data() {
         return {
             active: 'all'
         };
+    },
+    mounted: function mounted() {
+        var _this = this;
+
+        Event.$on('filter-category', function (cat) {
+            return _this.filterCategory(cat);
+        });
     },
 
     methods: {
@@ -14,7 +21,6 @@ Vue.component('toggles', {
             this.$children.forEach(function (toggle) {
                 toggle.isActive = toggle.category === cat;
             });
-            this.$emit('filter-category', cat);
         }
     }
 });

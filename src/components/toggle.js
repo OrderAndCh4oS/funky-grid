@@ -7,7 +7,7 @@ Vue.component('toggle', {
             'default': false
         }
     },
-    template: `<button @click="$emit('filter-category', category)" name="category" :class="{'active':this.isActive}" >{{category | capitalise}}</button>`,
+    template: `<button @click="filterCategory" name="category" :class="{'active':this.isActive}" >{{category | capitalise}}</button>`,
     data() {
         return {
             isActive: false
@@ -15,6 +15,11 @@ Vue.component('toggle', {
     },
     mounted() {
         this.isActive = this.selected;
+    },
+    methods: {
+        filterCategory() {
+            Event.$emit('filter-category', this.category)
+        }
     },
     filters: {
         capitalise: function (value) {
