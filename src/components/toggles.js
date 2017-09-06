@@ -5,7 +5,7 @@ Vue.component('toggles', {
             <template v-for="category in categories">
                 <toggle :category="category" :selected="category == 'all'"></toggle>&nbsp;
             </template>
-            <button @click="$emit('toggle-grid')">{{ gridtoggle }}</button>
+            <button @click="toggleGrid">{{ gridtoggle }}</button>
         </div>
     `,
     data() {
@@ -23,6 +23,9 @@ Vue.component('toggles', {
                     toggle.isActive = (toggle.category === cat);
                 }
             );
+        },
+        toggleGrid() {
+            Event.$emit('toggle-grid')
         }
     }
 });

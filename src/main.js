@@ -21,7 +21,10 @@ new Vue({
             this.startMasonry()
         });
         Event.$on('filter-category', (cat) => this.showCategory(cat))
-        Event.$on('toggle-box', (bx) => this.toggleDetails(bx))
+        Event.$on('toggle-box', (box) => this.toggleDetails(box))
+        Event.$on('toggle-grid', (box) => {
+            this.toggleView(box)
+        })
     },
     methods: {
         filterBoxes(category) {

@@ -8,27 +8,17 @@
 <body>
 <div id="root">
     <div class="wrapper">
-        <toggles @toggle-grid="toggleView"
-                 :gridtoggle="gridToggle"
-                 :categories="categories">
-        </toggles>
+        <toggles :gridtoggle="gridToggle"
+                 :categories="categories"></toggles>
         <transition name="fade" @after-leave="gridFadeEnd">
-            <div class="box-container" v-if="showGridView">
-                <div v-for="box in filteredBoxes" class="box" :style="box.boxStyles">
-                    <image-box :box="box"></image-box>
-                </div>
-            </div>
+            <template v-if="showGridView">
+                <grid-container :boxes="filteredBoxes"></grid-container>
+            </template>
         </transition>
         <transition name="fade" @after-leave="listFadeEnd">
-            <div class="list-container" v-if="showListView">
-                <div v-for="box in filteredBoxes" class="list-box">
-                    <img :src="box.smlImage" class="list-image">
-                    <div class="list-info-holder">
-                        <h3>{{box.title}}</h3>
-                        <a :href="box.url">View Project</a>
-                    </div>
-                </div>
-            </div>
+            <template v-if="showListView">
+                <list-container :boxes="filteredBoxes"></list-container>
+            </template>
         </transition>
     </div>
     <transition name="fade">
@@ -42,6 +32,8 @@
 <script src="app/listeners/vue-event-listener.js"></script>
 <script src="app/components/toggle.js"></script>
 <script src="app/components/toggles.js"></script>
+<script src="app/components/grid-container.js"></script>
+<script src="app/components/list-container.js"></script>
 <script src="app/components/image-box.js"></script>
 <script src="app/components/image-detail-box.js"></script>
 <script src="app/main.js"></script>
